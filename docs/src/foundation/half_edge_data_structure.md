@@ -46,8 +46,8 @@ and extend existing ones as well.
     - The reason we call edges "half-edges" above is from the property 
       of [surface subdivisions](plane_models.md#surface-subdivision), where each edge must be 
       identified with exactly one other edge. So a "complete" edge is really just two edges,
-      so it makes sense to call edges half-edges instead since they're only considered complete with identified with each other.
-    - A Edge node associates two HalfEdges together by storing pointers to the "left" and "right" half-edges 
+      therefore it makes sense to call edges half-edges instead since they're only considered complete with identified with each other.
+    - An Edge node associates two HalfEdges together by storing pointers to the "left" and "right" half-edges 
 - HalfEdge
     - We update the half-edge accordingly by including information about the edge it belongs to
 - Vertex
@@ -59,3 +59,9 @@ that is discussed in a later section**
 
 
 # Rust Implementation
+
+As the half-edge data structure makes use of doubly-linked lists, they are... impossible to
+implement "safely" in a way Rust wants. Rust ownership requires a tree-like structure but
+features like identification just makes this impossible as one object may have multiple references.
+
+Instead, we will make use of an
