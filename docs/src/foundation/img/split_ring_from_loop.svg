@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="194.23933mm"
+   height="69.010674mm"
+   viewBox="0 0 194.23933 69.010674"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.3 (1:1.4.3+202512261035+0d15f75042)"
+   sodipodi:docname="split_loop_into_ring.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.3430069"
+     inkscape:cx="346.61029"
+     inkscape:cy="304.54051"
+     inkscape:window-width="2240"
+     inkscape:window-height="1315"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-10.244425,-5.1222125)">
+    <path
+       id="rect1-6"
+       style="fill:#ffffff;stroke:#4169e1;stroke-width:1;stroke-linejoin:round"
+       d="m 142.31994,11.901346 v 55.95059 h 55.95059 v -55.95059 z m 15.95768,15.957682 h 24.03522 v 24.035226 h -24.03522 z" />
+    <path
+       style="fill:#ffffff;stroke:#4169e1;stroke-width:1;stroke-linejoin:round"
+       d="M 17.428223,11.901477 V 67.851804 L 33.385886,51.894134 V 27.85914 H 57.420884 V 51.894134 H 33.385886 L 17.428223,67.851804 H 73.378544 V 11.901477 H 17.428223"
+       id="path2" />
+    <g
+       id="g3"
+       transform="translate(-11.04816,-7.5124955)">
+      <path
+         style="fill:#ffffff;stroke:#4169e1;stroke-width:1;stroke-linejoin:round"
+         d="M 90.922244,19.413973 V 75.3643 L 106.87991,59.40663 V 35.371636 H 130.9149 V 59.40663 H 106.87991 L 90.922244,75.3643 H 146.87256 V 19.413973 H 90.922244"
+         id="path2-2" />
+      <path
+         style="fill:none;stroke:#db7093;stroke-width:1;stroke-linejoin:round"
+         d="M 106.87991,59.40663 90.922246,75.364299"
+         id="path3" />
+    </g>
+  </g>
+</svg>

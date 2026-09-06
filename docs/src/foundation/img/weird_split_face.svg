@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="89.430992mm"
+   height="47.193634mm"
+   viewBox="0 0 89.43099 47.193634"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.3 (1:1.4.3+202512261035+0d15f75042)"
+   sodipodi:docname="weird_split_face.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.67150344"
+     inkscape:cx="-216.67797"
+     inkscape:cy="562.17136"
+     inkscape:window-width="2240"
+     inkscape:window-height="1315"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="Triangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-27.581144)">
+    <path
+       id="path2"
+       style="fill:#ffffff;stroke:#000000;stroke-linejoin:round;marker-end:url(#Triangle)"
+       d="m 99.732089,28.299569 c -4.933152,3.030177 -11.388706,1.48751 -14.418883,-3.445641 -3.030177,-4.933152 -1.487512,-11.388707 3.44564,-14.418884 4.933149,-3.0301781 11.388704,-1.4875142 14.418884,3.44564 3.03018,4.933154 1.48751,11.38871 -3.445641,14.418885"
+       sodipodi:nodetypes="csssc" />
+    <circle
+       style="fill:#000000;stroke:none;stroke-width:1.10137;stroke-linejoin:round"
+       id="path1"
+       cx="40.934052"
+       cy="29.874706"
+       r="2.4952538" />
+    <circle
+       style="fill:#000000;stroke:none;stroke-width:1.10137;stroke-linejoin:round"
+       id="path1-0"
+       cx="95.10466"
+       cy="29.874706"
+       r="2.4952538" />
+  </g>
+</svg>

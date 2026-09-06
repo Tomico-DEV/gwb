@@ -2,3 +2,6 @@
 title = "GWB Design Notes and Documentation"
 authors = ["4EyedMan"]
 language = "en"
+
+[output.html]
+mathjax-support = true
