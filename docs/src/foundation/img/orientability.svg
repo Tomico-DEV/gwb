@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="109.69982mm"
+   height="68.399147mm"
+   viewBox="0 0 109.69982 68.399148"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.3 (1:1.4.3+202512261035+0d15f75042)"
+   sodipodi:docname="orientability.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     inkscape:lockguides="false"
+     inkscape:zoom="1.8992985"
+     inkscape:cx="149.26563"
+     inkscape:cy="227.71565"
+     inkscape:window-width="2240"
+     inkscape:window-height="1315"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-40.398686,-20.895873)">
+    <path
+       style="fill:#ffffff;stroke:#000000;stroke-width:1.2;stroke-linejoin:round"
+       d="M 46.608669,70.54643 106.66917,82.399018 85.780439,29.025188 Z"
+       id="path2" />
+    <path
+       style="fill:#ffffff;stroke:#000000;stroke-width:1.2;stroke-linejoin:round"
+       d="m 85.780439,29.025188 20.888731,53.37383 37.52608,-35.962189 z"
+       id="path3" />
+    <g
+       id="g7">
+      <g
+         id="g8-0"
+         transform="rotate(18.582254,59.664559,102.42289)">
+        <path
+           style="fill:none;stroke:#000000;stroke-width:1.2;stroke-linejoin:round"
+           d="m 73.976568,62.648599 c -11.13096,4.531188 -15.662148,-2.068586 -16.745694,-5.02371 -1.083545,-2.95512 0.788033,-11.524977 7.289303,-11.721986 6.50127,-0.197006 8.569854,5.02371 8.569854,5.02371"
+           id="path6-2" />
+        <path
+           style="fill:#000000;stroke:none;stroke-width:1.2;stroke-linejoin:round"
+           d="m 68.952861,52.404173 6.698276,-5.31922 0.197009,8.372848 z"
+           id="path7-3" />
+      </g>
+      <g
+         id="g8-2"
+         transform="rotate(86.729319,90.846816,78.911891)">
+        <path
+           style="fill:none;stroke:#000000;stroke-width:1.2;stroke-linejoin:round"
+           d="m 73.976568,62.648599 c -11.13096,4.531188 -15.662148,-2.068586 -16.745694,-5.02371 -1.083545,-2.95512 0.788033,-11.524977 7.289303,-11.721986 6.50127,-0.197006 8.569854,5.02371 8.569854,5.02371"
+           id="path6-8" />
+        <path
+           style="fill:#000000;stroke:none;stroke-width:1.2;stroke-linejoin:round"
+           d="m 68.952861,52.404173 6.698276,-5.31922 0.197009,8.372848 z"
+           id="path7-9" />
+      </g>
+    </g>
+    <path
+       style="fill:#000000;stroke-width:1.2;stroke-linejoin:round"
+       d="m 85.707769,29.104391 -0.931415,8.111628 7.574896,-3.365028 z"
+       id="path1"
+       sodipodi:nodetypes="cccc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.1111px;font-family:'JetBrains Mono';-inkscape-font-specification:'JetBrains Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#db7093;stroke-width:1.2;stroke-linejoin:round"
+       x="78.727425"
+       y="48.803928"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.1111px;font-family:'JetBrains Mono';-inkscape-font-specification:'JetBrains Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#db7093;stroke-width:1.2"
+         x="78.727425"
+         y="48.803928">-</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.1111px;font-family:'JetBrains Mono';-inkscape-font-specification:'JetBrains Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#4169e1;stroke-width:1.2;stroke-linejoin:round"
+       x="92.979156"
+       y="45.703785"
+       id="text1-0"><tspan
+         sodipodi:role="line"
+         id="tspan1-4"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.1111px;font-family:'JetBrains Mono';-inkscape-font-specification:'JetBrains Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#4169e1;stroke-width:1.2"
+         x="92.979156"
+         y="45.703785">+</tspan></text>
+  </g>
+</svg>

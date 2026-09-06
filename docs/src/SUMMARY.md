@@ -2,4 +2,5 @@
 
 - [Introduction](./introduction.md)
 - [Foundation](./foundation/foundation.md)
-    - [Half Edge Model](./foundation/half_edge_model.md)
+    - [Plane Models](./foundation/plane_models.md)
+    - [Half Edge Data Structure](./foundation/half_edge_data_structure.md)
