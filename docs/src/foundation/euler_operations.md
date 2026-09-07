@@ -158,6 +158,7 @@ It can do two things:
     ![Connected sum example](img/connected_sum_ex.svg)
 - Create a hole in an object
     ![Connected sum hole example](img/connected_sum_hole.svg)
+    (a teal backdrop is added to make the hole visible on a white backdrop)
 
 ### Connected Minus (Remove and Create Face from Ring)
 
