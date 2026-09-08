@@ -13,15 +13,15 @@ pub mod point {
         pub y: Real,
         pub z: Real,
     }
-    
+
     // impl Point {
-    
+
     // }
 }
 
 pub mod vector {
-    use nalgebra as na;
     use na::Vector4;
+    use nalgebra as na;
 
     /// A column vector in 3-dimensional space.
     use crate::core::scalar::Real;

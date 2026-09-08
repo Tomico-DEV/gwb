@@ -1,7 +1,7 @@
 use slotmap::new_key_type;
 
-use super::half_edge::HalfEdgeKey;
 use super::face::FaceKey;
+use super::half_edge::HalfEdgeKey;
 
 new_key_type! { pub struct EdgeLoopKey; }
 

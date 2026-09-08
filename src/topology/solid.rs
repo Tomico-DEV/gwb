@@ -1,8 +1,8 @@
-use slotmap::{new_key_type, SlotMap};
+use slotmap::{SlotMap, new_key_type};
 
-use super::face::*;
-use super::edge_loop::*;
 use super::edge::*;
+use super::edge_loop::*;
+use super::face::*;
 use super::half_edge::*;
 use super::vertex::*;
 
@@ -10,7 +10,7 @@ new_key_type! { pub struct SolidKey; }
 
 /// A solid.
 pub struct Solid {
-    /// A SlotMap of the [faces](faces.rs) this solid owns 
+    /// A SlotMap of the [faces](faces.rs) this solid owns
     faces: SlotMap<FaceKey, Face>,
     /// A SlotMap of the [loops](edge_loop.rs) this solid owns
     edge_loops: SlotMap<EdgeLoopKey, EdgeLoop>,
