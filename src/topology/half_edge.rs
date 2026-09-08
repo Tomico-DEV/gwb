@@ -1,6 +1,7 @@
 use slotmap::new_key_type;
 
 use super::edge_loop::EdgeLoopKey;
+use super::edge::EdgeKey;
 use super::vertex::VertexKey;
 
 new_key_type! { pub struct HalfEdgeKey; }
@@ -15,6 +16,8 @@ pub struct HalfEdge {
     next: HalfEdgeKey,
     /// The key to the previous half-edge
     prev: HalfEdgeKey,
+    /// The key to the edge associated with thsi half-edge
+    edge: EdgeKey,
     /// The key to the loop this half-edge belongs to
     edge_loop: EdgeLoopKey,
 }

@@ -6,5 +6,6 @@
 mod solid;
 mod face;
 mod edge_loop;
+mod edge;
 mod half_edge;
 mod vertex;
