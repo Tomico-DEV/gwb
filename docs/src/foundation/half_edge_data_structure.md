@@ -64,7 +64,7 @@ As the half-edge data structure makes use of doubly-linked lists, they are... im
 implement "safely" in a way Rust wants. Rust ownership requires a tree-like structure but
 features like identification just makes this impossible as one object may have multiple references.
 
-Instead, we will make use of an "arena". `SlotMap`s seem to be the best suited for this.
+Instead, we will make use of map. `SlotMap`s seem to be the best suited for this.
 One parent object owns all of the data in a model,
 and they are referenced through IDs. Yes, this circumvents Rust's ownership mechanism as 
 you can definitely cause dangling references through the removal of an object that still has references,
