@@ -70,6 +70,9 @@ and they are referenced through IDs. Yes, this circumvents Rust's ownership mech
 you can definitely cause dangling references through the removal of an object that still has references,
 but this will not cause a traditional undefined behavior where the program becomes unsafe.
 
+As I will be using a SlotMap, I will not implement a linked lists where I don't need them 
+(for example in `Vertex`) as I can just iterate through the map 
+
 Instead, we can ensure this never happens by only allowing the creation and deletion of objects
 through Euler operations, and if there is a bug or an oversight, we can handle cases where
 a reference is missing without ever causing undefined behavior.
@@ -110,3 +113,7 @@ instead it would have a `Point` for its actual coordinate.
 This distinction makes it more obvious which operations operate on
 topology and which operations operate on geometry. I think. I haven't
 made this yet so I can't say for sure haha.
+
+## Loops
+
+`loop` is a reserved keyword in Rust, so I will call them `EdgeLoop`s instead.
