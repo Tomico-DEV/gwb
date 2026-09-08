@@ -74,5 +74,39 @@ Instead, we can ensure this never happens by only allowing the creation and dele
 through Euler operations, and if there is a bug or an oversight, we can handle cases where
 a reference is missing without ever causing undefined behavior.
 
+## Topology and Geometry
 
+GWB makes a distinction between topology and geometry, and to the average math n00b (me),
+they sound like the same thing. So I'll make this distinction clear here:
 
+**Topology**: How things are *connected*
+
+**Geometry**: Where things are
+
+Now, the true math nerds of you out there will be ready to jump out of your chair and yell at
+me saying I am wrong; there's no need, I know it is but for all intents and purposes, this is
+good enough.
+
+Under the geometry module, we store things that are coordinate-based, such as
+
+- Point
+- Vector
+- Transform
+
+Etc (still thinking about what we need)
+
+and under the topology module, we will keep nodes like
+
+- Vertex
+- HalfEdge
+- Edge
+- Loop
+- Face
+- Solid
+
+A vertex would not store its x, y, and z coordinates explicitely,
+instead it would have a `Point` for its actual coordinate.
+
+This distinction makes it more obvious which operations operate on
+topology and which operations operate on geometry. I think. I haven't
+made this yet so I can't say for sure haha.
