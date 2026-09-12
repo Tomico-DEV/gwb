@@ -8,6 +8,7 @@ use super::vertex::*;
 
 use crate::geometry::point::Point;
 use crate::topology::edge::{Edge, EdgeKey};
+use crate::topology::edge_loop;
 
 /// A collection of keys belonging to a skeletal primitive
 /// 
@@ -170,9 +171,20 @@ impl Solid {
         let end_start_neigh = self.get_half_edge(he_end_start).get_neighbors();
         let start_end_neigh = self.get_half_edge(he_start_end).get_neighbors();
 
+        // fix the previous halfedges 
         self.get_half_edge(end_start_neigh.prev).set_next(he_start_end); 
-        
+        self.get_half_edge(start_end_neigh.prev).set_next(he_end_start);
 
+        // because we modifed the previous half-edges' destination,
+        // we need to update our prev pointer too
+        self.get_half_edge(he_start_end).set_prev(end_start_neigh.prev);
+        self.get_half_edge(he_end_start).set_prev(start_end_neigh.prev);
+        
+        // reset the loop assignment
+        self.get_half_edge(he_end_start).edge_loop = Some(new_loop);  // insert_he broke this
+        let end_start_loop = self.get_half_edge(he_start_end).get_edge_loop();
+        self.set_loop_origin(end_start_loop, he_start_end);
+        
         SplitFaceRes { face: new_face, edge_loop: new_loop, edge: () }
     }
 } 

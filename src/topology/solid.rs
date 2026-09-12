@@ -100,6 +100,11 @@ impl Solid {
         self.get_half_edge(he_key).neighbors = Some(he_neigh);
         self.get_half_edge(target_key).neighbors = Some(target_neigh);
     }
+
+    /// Set the origin half-edge of a loop
+    pub fn set_loop_origin(&mut self, edge_loop: EdgeLoopKey, origin: HalfEdgeKey) {
+        self.get_edge_loop(edge_loop).half_edge = origin;
+    }
 }
 
 // Methods for adding and getting stuff from a Solid
