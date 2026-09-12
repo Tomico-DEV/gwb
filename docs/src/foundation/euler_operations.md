@@ -153,6 +153,14 @@ skeletal primitive into two, it starts to make a bit more sense.
 Again, it's good to remind ourselves that these operations are purely topological and as such, will sometimes
 make no sense.
 
+Here is a diagram for how this is implemented:
+
+![Face split procedure](img/face_split.svg)
+
+New half-edges are added between the start and end points, then they are inserted into
+the loop which makes it look kinda broken (middle diagram). Then, the pointers are fixed
+to correctly split the two loops.
+
 ### Join Face (Remove Edge and Face)
 
 This is the inverse of `Join Face`: it joins two distinct adjacent faces by removing the edge between them

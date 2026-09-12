@@ -8,9 +8,9 @@ new_key_type! { pub struct EdgeLoopKey; }
 /// A loop of [HalfEdges](half_edge.rs).
 pub struct EdgeLoop {
     /// A key to a half-edge belonging to this loop
-    half_edge: HalfEdgeKey,
+    pub half_edge: HalfEdgeKey,
     /// The face associated with this loop
-    face: Option<FaceKey>,
+    pub face: Option<FaceKey>,
 }
 
 impl EdgeLoop {

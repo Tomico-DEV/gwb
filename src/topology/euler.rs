@@ -44,6 +44,13 @@ pub struct ExtendVertexRes {
     vertex: VertexKey,
 }
 
+pub struct SplitFaceRes {
+    face: FaceKey,
+    edge_loop: EdgeLoopKey,
+    edge: EdgeKey,
+}
+
+// low level Euler operators
 impl Solid {
     /// Split a vertex at a halfedge, moving the edges contained with a "wedge"
     /// to the new vertex and assigning the loops of two newly created halfedges
@@ -122,5 +129,50 @@ impl Solid {
         
         ExtendVertexRes { edge: edge, vertex: new_v }
     }
+
+    /// Split a face between two vertices of two half-edges belonging to the same face.
+    /// Half-edges in [start, end) are assigned to a new loop
+    pub fn split_face(&mut self, start: HalfEdgeKey, end: HalfEdgeKey) 
+    -> SplitFaceRes {
+        // create new half-edges 
+        let he_start_end = HalfEdge::new(self.get_half_edge(start).vertex);
+        let he_start_end = self.add_half_edge(he_start_end);  // positive
+        let he_end_start = HalfEdge::new(self.get_half_edge(end).vertex);
+        let he_end_start = self.add_half_edge(he_end_start);
+
+        // create new loop and face
+        let new_loop = self.add_edge_loop(EdgeLoop::new(he_end_start));
+        let new_face = self.add_face(Face::new(new_loop));
+        
+        // reassign half-edges to new loop
+        let mut he_key = start;
+        let mut past_start = false;
+        while start != end {
+            // check if this will become an infinite loop
+            if past_start && he_key == start {
+                panic!("split_face: Detected a cycle of `start` that does not go through `end`!")
+            }
+
+            let he = self.get_half_edge(he_key);
+            he.edge_loop = Some(new_loop);
+            he_key = he.get_next();
+            
+            past_start = true;
+        }
+
+        // now insert the new half-edges into cycles
+        self.insert_he_before(he_end_start, start);
+        self.insert_he_before(he_start_end, end);
+
+        // fix the loops so they are separated (see diagram in docs and this will make sense lol)
+
+        // get neighborhoods of the new halfedges
+        let end_start_neigh = self.get_half_edge(he_end_start).get_neighbors();
+        let start_end_neigh = self.get_half_edge(he_start_end).get_neighbors();
+
+        self.get_half_edge(end_start_neigh.prev).set_next(he_start_end); 
+        
+
+        SplitFaceRes { face: new_face, edge_loop: new_loop, edge: () }
+    }
 } 
-    

@@ -64,5 +64,26 @@ impl HalfEdge {
         self.get_neighbors().prev
     }
 
+
+    /// Set the next half-edge of the loop
+    /// 
+    /// Don't use this if you are a user! Make use of euler operators 
+    /// and such instead
+    /// 
+    /// Panics if half-edge has no neighbors
+    pub fn set_next(&mut self, key: HalfEdgeKey) {
+        self.get_neighbors().next = key;
+    }
+
+    /// Set the previous half-edge of the loop
+    /// 
+    /// Don't use this if you are a user! Make use of euler operators 
+    /// and such instead
+    /// 
+    /// Panics if half-edge has no neighbors
+    pub fn set_prev(&mut self, key: HalfEdgeKey) {
+        self.get_neighbors().prev = key;
+    }
+
     
 }

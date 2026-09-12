@@ -22,11 +22,11 @@ realization of the plane model.
 
 ## Topology
 
-So here's the main question: how do we make a 2-mainfold in a way that we
+So here's the main question: how do we make a 2-manifold in a way that we
 can realistically represent? How do we reason about their properties? 
 
 We mainly care about the topology of a solid here. That is, we are allowed
-to freely stretch and mold a solid as long as we tear or rip it, and we 
+to freely stretch and mold a solid as long as we don't tear or rip it, and we 
 are interested in objects that are "topologically equivalent". For example,
 a cube can be formed into a sphere, and so can a cylinder, therefore
 a cube is topologically equivalent to a cylinder.
@@ -72,12 +72,12 @@ for those unfamiliar with graph theory and topology, of which I am a part of.
 
 So I will first describe it simply then try to define it as rigirously as reasonable.
 
-A plane model is defined as a collection of *finite* vertices, edges, and
-polygons which are bounded by said edges and vertices. There are a few restrictions:
-edges have directions cannot cross each other (this is known as a planar directed graph),
-and polygons have orientation.
+A plane model is defined as a collection of a *finite* number of vertices, edges, and
+polygonal faces which are bounded by said edges and vertices. There are a few restrictions:
+edges have directions and cannot cross each other (this is known as a planar directed graph),
+and faces have orientation.
 
-Each edge, vertex, and polygon is labeled, and they are identified when their labels are the same.
+Each edge, vertex, and face is labeled, and they are identified when their labels are the same.
 
 ## Conditions for realizable plane models
 
@@ -89,8 +89,8 @@ to ensure they are 2-manifolds.
 A surface subdivision is defined as a plane model where
 
 - Every edge is identified with exactly one other edge
-- Polygons sharing identified vertices are arranged in a continuous cycle and
-  the shared edge between any two polygon must be adjacent to an identified vertex
+- faces sharing identified vertices are arranged in a continuous cycle and
+  the shared edge between any two face must be adjacent to an identified vertex
 
 ![Surface subdivision rules](img/surface_subdiv_rules.svg)
    
@@ -101,15 +101,15 @@ To address this, we introduce the concept of orientability
 
 ### Orientability (Möbius's rule)
 
-A plane model is *orientable* when we choose an orientation for all polygons and
+A plane model is *orientable* when we choose an orientation for all faces and
 for each pair of identified edges, one edge is in the "negative" direction and the other
 is in the "positive" direction. This is best described with an illustration:
 
 ![Example of an orientable plane model](img/orientability.svg)
 
-In the illustration above,  the two polygons are given the same orientation and are
+In the illustration above,  the two faces are given the same orientation and are
 identified at an edge whose direction is given by the black arrow. In the left
-polygon, the direction of the edge is going against the orientation of the polygon,
+face, the direction of the edge is going against the orientation of the face,
 therefore having a negative direction and vice verse in the right triangle. The above
 example satisfies the conditions, and thus we can say it is orientable.
 
@@ -139,13 +139,13 @@ regardless of representation if the underlying surface is the same.
 # Duals
 
 One more useful tool for reasoning about plane models are *duals*. The idea of a dual
-is that by turning polygons into vertices and joining them with an edge where polygons are joined,
+is that by turning faces into vertices and joining them with an edge where faces are joined,
 you can construct an object with the "same" properties. 
 
 Let's describe this in a bit more detail before discussing how this is useful.
 
-When we construct the dual of a plane model, we assign a dual vertex to each polygon.
-Connected polygons are joined together via an edge between their dual vertices. This is best
+When we construct the dual of a plane model, we assign a dual vertex to each face.
+Connected faces are joined together via an edge between their dual vertices. This is best
 described with an illustration:
 
 ![Dual example](img/duals.svg)
@@ -154,8 +154,8 @@ Note that one additional vertex for the infinite surrounding is included.
 
 There is also one more rule for conserving orientation:
 
-- The direction of the dual edge goes from the dual vertex of the polygon whose identified edge direction
-  is negative to the dual vertex of the polygon whose identified edge direction is positive 
+- The direction of the dual edge goes from the dual vertex of the face whose identified edge direction
+  is negative to the dual vertex of the face whose identified edge direction is positive 
 
 It offers a different view into the topology of a plane model. Say you wanted to know which faces are connected
 to a particular face of interest. This can get confusing if your model is complicated, but looking at its

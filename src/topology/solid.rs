@@ -149,13 +149,21 @@ impl Solid {
         &mut self.edges[key]
     }
 
-    /// Add an edge loop to the solid
+    /// Add an edge loop to the solid. Automatically sets the edge loop as
+    /// the parent of the half-edge
     pub fn add_edge_loop(&mut self, edge_loop: EdgeLoop) -> EdgeLoopKey {
-        self.edge_loops.insert(edge_loop)
+        let key = self.edge_loops.insert(edge_loop);
+
+        // set half-edge loop parent 
+        let edge_loop = self.get_edge_loop(key);
+        let he = edge_loop.half_edge;
+        self.get_half_edge(he).edge_loop = Some(key);
+
+        key
     }
 
     /// Get a mutable edge loop from an `EdgeLoopKey`
-    pub fn get_get_loop(&mut self, key: EdgeLoopKey) -> &mut EdgeLoop {
+    pub fn get_edge_loop(&mut self, key: EdgeLoopKey) -> &mut EdgeLoop {
         &mut self.edge_loops[key]
     }
 
