@@ -84,7 +84,7 @@ operations that modify existing objects will use the words *add* and *remove* in
 
 ## Skeletal Primitives
 
-### Create Skeletal Primitive (New Vertex and Face Solid)
+### New Skeletal Primitive (New Vertex and Face Solid)
 
 This operator creates a new skeletal primitve with one vertex and one face.
 The face has one empty loop with no edges.
@@ -96,16 +96,47 @@ objects with the same data structure as a skeletal primitive.
 
 ## Local Manipulations
 
-### Extend Vertex (Add Edge and Vertex)
+### Split Vertex (Add Edge and Vertex)
 
 This operator splits a vertex into two and joins them with a new edge, or more
-accurately subdivides a cycle of edges into two. Think of is as "extruding" a
-vertex as you would in a software like Blender.
+accurately subdivides a loop of edges. Think of it as adding a new
+vertex to an existing loop.
+
+However, it is important to consider the case where many edges are incident at the
+vertex. Which edges should be reassigned to the new vertex?
+
+![Split vertex example](img/vertex_splitting.svg)
+
+Because of this ambiguity, three parameters are needed for this operator:
+
+- The vertex to split
+- The location of the new vertex
+- Which edges to reassign to the new vertex
+
+We also need to think about the case where *no* edges are to moved into new vertex,
+ie a "strut" edge.
+
+And finally, there is the question of which loops the newly created half-edges will 
+be inserted into. Consider the following diagram:
+
+![Split vertex problem 1](img/vertex_split_problem_1.svg)
+
+How do we assign the loops to the newly created edge?
+
+![Split vertex problem 2](img/vertex_split_problem_2.svg)
+
+To us, it seems pretty obvious that the diagram on the left is the right answer.
+In case you are confused, the diagram on the right treats the 
+
+
+
+This is solved by treating the "edges to reassign to the new vertex"
+input as a **range** instead of a list. 
 
 ### Collapse Edge (Remove Edge and Vertex)
 
-This operator is the inverse of the `Extend Vertex` operator. It joins
-two connected vertices and removes the edge between them, merging their edge cycle.
+This operator is the inverse of the `Subdivide Loop` operator. It joins
+two connected vertices in a loop and removes the edge between them, merging their edge cycle.
 
 ### Split Face (Add Edge and Face)
 

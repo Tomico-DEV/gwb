@@ -117,3 +117,8 @@ made this yet so I can't say for sure haha.
 ## Loops
 
 `loop` is a reserved keyword in Rust, so I will call them `EdgeLoop`s instead.
+
+
+## Operations
+Because `Solid` owns the actual data, operations that manipulate or access vertices
+will have to be done thorugh `Solid` 

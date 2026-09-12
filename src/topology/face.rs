@@ -2,6 +2,7 @@ use slotmap::new_key_type;
 
 use super::edge_loop::EdgeLoopKey;
 use crate::geometry::surface::PlanarSurface;
+use crate::geometry::vector::Vec3;
 
 new_key_type! { pub struct FaceKey; }
 
@@ -13,4 +14,19 @@ pub struct Face {
     inner: Vec<EdgeLoopKey>,
     /// The surface of this face
     surface: PlanarSurface,
+}
+
+impl Face {
+    /// New empty face.
+    /// 
+    /// Surface is initialized with 0, 0, 0 
+    pub fn new(boundary: EdgeLoopKey) -> Self {
+        Self {
+            outer: boundary,
+            inner: Vec::<EdgeLoopKey>::new(),
+            surface: PlanarSurface {
+                eq: Vec3::zero()
+            }
+        }
+    }
 }
