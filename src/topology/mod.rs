@@ -4,6 +4,7 @@
 ///! are the [geometry module](../geometry/mod.rs)'s responsibility.
 
 mod solid;
+mod topology;
 pub use solid::SolidKey;
 mod face;
 mod edge_loop;

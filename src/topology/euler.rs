@@ -71,11 +71,11 @@ impl Solid {
         coord: Point) 
     -> ExtendVertexRes {
         // check if wedge_start and wedge_end are on the same vertex
-        if anchor != self.get_half_edge(wedge_start).vertex
-            || anchor != self.get_half_edge(wedge_end).vertex
-        {
-            panic!("split_vertex: anchor does not belong to wedge_start or wedge_end!")
-        }
+        debug_assert!(
+            anchor != self.get_half_edge(wedge_start).vertex
+            || anchor != self.get_half_edge(wedge_end).vertex,
+            "split_vertex: anchor does not belong to wedge_start or wedge_end!"
+        );
         
         // create new vertex
         let new_v = self.add_vertex(Vertex::new(coord));
@@ -86,9 +86,10 @@ impl Solid {
         let mut past_start = false;
         while he != wedge_end {
             // check if this will become an infinite loop
-            if past_start && he == wedge_start {
-                panic!("split_vertex: Detected a cycle of wedge_start that does not go through wedge_end!")
-            }
+            debug_assert!(
+                past_start && he == wedge_start,
+                "split_vertex: Detected a cycle of wedge_start that does not go through wedge_end!"
+            );
             
             self.get_half_edge(he).vertex = new_v;
 
@@ -153,9 +154,10 @@ impl Solid {
         let mut past_start = false;
         while start != end {
             // check if this will become an infinite loop
-            if past_start && he_key == start {
-                panic!("split_face: Detected a cycle of `start` that does not go through `end`!")
-            }
+            debug_assert!(
+                past_start && he_key == start,
+                "split_face: Detected a cycle of `start` that does not go through `end`!"
+            );
 
             let he = self.get_half_edge(he_key);
             he.edge_loop = Some(new_loop);
@@ -189,5 +191,47 @@ impl Solid {
         self.set_loop_origin(end_start_loop, he_start_end);
         
         SplitFaceRes { face: new_face, edge_loop: new_loop, edge: new_edge }
+    }
+
+    /// Split a loop along half-edges that occur twice, which if created properly,
+    /// should be an edge.
+    pub fn split_ring_from_loop(&mut self, edge_key: EdgeKey)
+    -> EdgeLoopKey {
+        // Check if this op is valid
+    
+        // do the half-edges of this edge belong to the same loop?
+        let edge = self.get_edge(edge_key);
+        let he1_key = edge.neg;
+        let he2_key = edge.pos;
+
+        let he1 = self.get_half_edge(he1_key);
+        let he2 = self.get_half_edge(he2_key);
+        
+
+        debug_assert!(
+            
+        )
+
+
+        // get neighborhoods
+        let he1 = self.get_half_edge(he1_key);
+        let he1_neigh = he1.get_neighbors();
+        let he1_start = he1.vertex;
+        let he1_end = self.get_half_edge(he1_neigh.next).vertex;
+
+        let he2 = self.get_half_edge(he2_key);
+        let he2_neigh = he2.get_neighbors();
+        let he2_start = he2.vertex;
+        let he2_end = self.get_half_edge(he2_neigh.next).vertex;
+
+        
+        // check if they are the "same"
+        if he2_start != he1_end || he1_start != he2_end {
+            return None
+        }
+        
+        // get vertex label from neighborhoods
+
+        aaa
     }
 } 

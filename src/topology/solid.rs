@@ -114,20 +114,28 @@ impl Solid {
         self.vertices.insert(vertex)
     }
 
+    /// Get a vertex from a `VertexKey`
+    pub fn get_vertex(&self, key: VertexKey) -> &Vertex {
+        &self.vertices[key]
+    }
+
     /// Get a mutable vertex from a `VertexKey`
-    pub fn get_vertex(&mut self, key: VertexKey) -> &mut Vertex {
+    pub fn get_vertex_mut(&mut self, key: VertexKey) -> &mut Vertex {
         &mut self.vertices[key]
     }
 
-    /// Add an empty halfedge to the solid.
-    /// 
-    /// Empty = has no neighbors. Gains neighbors through operators
+    /// Add a halfedge to the solid.
     pub fn add_half_edge(&mut self, half_edge: HalfEdge) -> HalfEdgeKey {
         self.half_edges.insert(half_edge)
     }
 
     /// Get a mutable half-edge from a `HalfEdgeKey`
-    pub fn get_half_edge(&mut self, key: HalfEdgeKey) -> &mut HalfEdge {
+    pub fn get_half_edge(&self, key: HalfEdgeKey) -> &HalfEdge {
+        &self.half_edges[key]
+    }
+
+    /// Get a mutable half-edge from a `HalfEdgeKey`
+    pub fn get_half_edge_mut(&mut self, key: HalfEdgeKey) -> &mut HalfEdge {
         &mut self.half_edges[key]
     }
 
@@ -140,17 +148,22 @@ impl Solid {
         let pos_key = edge.pos;
         let neg_key = edge.neg;
 
-        let pos = self.get_half_edge(neg_key);
+        let pos = self.get_half_edge_mut(pos_key);
         pos.edge = Some(key);
 
-        let neg = self.get_half_edge(pos_key);
+        let neg = self.get_half_edge_mut(neg_key);
         neg.edge = Some(key);
 
         key
     }
 
+    /// Get an edge from an `EdgeKey`
+    pub fn get_edge(&self, key: EdgeKey) -> &Edge {
+        &self.edges[key]
+    }
+
     /// Get a mutable edge from an `EdgeKey`
-    pub fn get_edge(&mut self, key: EdgeKey) -> &mut Edge {
+    pub fn get_edge_mut(&mut self, key: EdgeKey) -> &mut Edge {
         &mut self.edges[key]
     }
 
@@ -162,13 +175,18 @@ impl Solid {
         // set half-edge loop parent 
         let edge_loop = self.get_edge_loop(key);
         let he = edge_loop.half_edge;
-        self.get_half_edge(he).edge_loop = Some(key);
+        self.get_half_edge_mut(he).edge_loop = Some(key);
 
         key
     }
 
+    /// Get an edge loop from an `EdgeLoopKey`
+    pub fn get_edge_loop(&self, key: EdgeLoopKey) -> &EdgeLoop {
+        &self.edge_loops[key]
+    }
+
     /// Get a mutable edge loop from an `EdgeLoopKey`
-    pub fn get_edge_loop(&mut self, key: EdgeLoopKey) -> &mut EdgeLoop {
+    pub fn get_edge_loop_mut(&mut self, key: EdgeLoopKey) -> &mut EdgeLoop {
         &mut self.edge_loops[key]
     }
 
@@ -178,7 +196,12 @@ impl Solid {
     }
 
     /// Get a face from a `FaceKey`
-    pub fn get_face(&mut self, key: FaceKey) -> &mut Face {
+    pub fn get_face(&self, key: FaceKey) -> &Face {
+        &self.faces[key]
+    }
+
+    /// Get a mutable face from a `FaceKey`
+    pub fn get_face_mut(&mut self, key: FaceKey) -> &mut Face {
         &mut self.faces[key]
     }
 }
