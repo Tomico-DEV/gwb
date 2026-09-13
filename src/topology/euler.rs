@@ -8,7 +8,6 @@ use super::vertex::*;
 
 use crate::geometry::point::Point;
 use crate::topology::edge::{Edge, EdgeKey};
-use crate::topology::edge_loop;
 
 /// A collection of keys belonging to a skeletal primitive
 /// 
@@ -40,6 +39,8 @@ impl Solid {
     }
 }
 
+// low level Euler operators
+
 pub struct ExtendVertexRes {
     edge: EdgeKey,
     vertex: VertexKey,
@@ -51,7 +52,6 @@ pub struct SplitFaceRes {
     edge: EdgeKey,
 }
 
-// low level Euler operators
 impl Solid {
     /// Split a vertex at a halfedge, moving the edges contained with a "wedge"
     /// to the new vertex and assigning the loops of two newly created halfedges
@@ -139,7 +139,10 @@ impl Solid {
         let he_start_end = HalfEdge::new(self.get_half_edge(start).vertex);
         let he_start_end = self.add_half_edge(he_start_end);  // positive
         let he_end_start = HalfEdge::new(self.get_half_edge(end).vertex);
-        let he_end_start = self.add_half_edge(he_end_start);
+        let he_end_start = self.add_half_edge(he_end_start);  // negative
+
+        // identify with edge
+        let new_edge = self.add_edge(Edge::new(he_start_end, he_end_start));
 
         // create new loop and face
         let new_loop = self.add_edge_loop(EdgeLoop::new(he_end_start));
@@ -185,6 +188,6 @@ impl Solid {
         let end_start_loop = self.get_half_edge(he_start_end).get_edge_loop();
         self.set_loop_origin(end_start_loop, he_start_end);
         
-        SplitFaceRes { face: new_face, edge_loop: new_loop, edge: () }
+        SplitFaceRes { face: new_face, edge_loop: new_loop, edge: new_edge }
     }
 } 
