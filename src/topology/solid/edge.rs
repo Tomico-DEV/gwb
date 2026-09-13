@@ -5,6 +5,7 @@ use super::half_edge::HalfEdgeKey;
 new_key_type! { pub struct EdgeKey; }
 
 /// An edge, used for the identification of two half-edges.
+#[derive(Clone, Copy)]
 pub struct Edge {
     /// The first half-edge in the positive direction
     pub pos: HalfEdgeKey,

@@ -1,5 +1,8 @@
 use slotmap::new_key_type;
 
+use crate::topology::TopologyWrite;
+
+use super::Solid;
 use super::edge::EdgeKey;
 use super::edge_loop::EdgeLoopKey;
 use super::vertex::VertexKey;
@@ -21,7 +24,7 @@ pub struct HalfEdge {
     /// The [Vertex](vertex.rs) associated with this half-edge
     pub vertex: VertexKey,
     /// The key to the next half-edge
-    pub neighbors: Option<HalfEdgeNeighbors>,
+    pub(super) neighbors: Option<HalfEdgeNeighbors>,
     /// The key to the edge associated with thsi half-edge
     pub edge: Option<EdgeKey>,
     /// The key to the loop this half-edge belongs to
@@ -44,8 +47,18 @@ impl HalfEdge {
     /// 
     /// # Panics
     /// Panics if neighbors are missing (improperly initialized)
-    pub fn get_neighbors(&self) -> HalfEdgeNeighbors {
+    pub fn neighbors(&self) -> HalfEdgeNeighbors {
         self.neighbors.unwrap_or_else(||panic!("get_neighbor: half-edge is uninitialized!"))
+    }
+
+    /// Check if vertex has neighbors that are not itself
+    /// 
+    /// # Panics
+    /// Panics if neighbors are missing (improperly initialized)
+    pub fn has_neighbors(&self) -> bool {
+        // if next is not prev then they must not be self
+        // as this should be impossible via the use the Solid.set_he_neighbor
+        self.get_next() != self.get_prev()
     }
 
     /// Get next half-edge in the loop
@@ -53,7 +66,7 @@ impl HalfEdge {
     /// # Panics
     /// Panics if neighbors are missing (improperly initialized)
     pub fn get_next(&self) -> HalfEdgeKey {
-        self.get_neighbors().next
+        self.neighbors().next
     }
 
     /// Get previous half-edge in the loop
@@ -61,7 +74,7 @@ impl HalfEdge {
     /// # Panics
     /// Panics if neighbors are missing (improperly initialized)
     pub fn get_prev(&self) -> HalfEdgeKey {
-        self.get_neighbors().prev
+        self.neighbors().prev
     }
 
 
@@ -72,7 +85,7 @@ impl HalfEdge {
     /// 
     /// Panics if half-edge has no neighbors
     pub fn set_next(&mut self, key: HalfEdgeKey) {
-        self.get_neighbors().next = key;
+        self.neighbors().next = key;
     }
 
     /// Set the previous half-edge of the loop
@@ -82,13 +95,11 @@ impl HalfEdge {
     /// 
     /// Panics if half-edge has no neighbors
     pub fn set_prev(&mut self, key: HalfEdgeKey) {
-        self.get_neighbors().prev = key;
+        self.neighbors().prev = key;
     }
 
     /// Get edge loop. Panics if edge loop is not present
     pub fn get_edge_loop(&mut self) -> EdgeLoopKey {
         self.edge_loop.unwrap_or_else(||panic!("get_edge_loop: half-edge has no loop!"))
     }
-
-    
 }

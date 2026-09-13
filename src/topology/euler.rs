@@ -1,13 +1,15 @@
 ///! This module is responsible for Euler operations
 
+use super::{Topology, TopologyRead, TopologyWrite};
+
 use super::solid::*;
-use super::face::*;
-use super::edge_loop::*;
-use super::half_edge::*;
-use super::vertex::*;
+use super::solid::face::*;
+use super::solid::edge::*;
+use super::solid::edge_loop::*;
+use super::solid::half_edge::*;
+use super::solid::vertex::*;
 
 use crate::geometry::point::Point;
-use crate::topology::edge::{Edge, EdgeKey};
 
 /// A collection of keys belonging to a skeletal primitive
 /// 
@@ -20,7 +22,7 @@ pub struct SkeletalPrimtive {
 }
 
 // skeletal primitives
-impl Solid {
+impl<S: TopologyRead + TopologyWrite> Topology<S> {
     /// Create a new skeletal primitive from nothing
     /// 
     /// Returns a tuple of the created lone vertex, 
@@ -28,12 +30,12 @@ impl Solid {
     -> SkeletalPrimtive
     {
         // Add lone vertex
-        let vertex = self.add_vertex(Vertex::new(origin));
+        let vertex = self.solid.add_vertex(Vertex::new(origin));
         // Add empty halfedge and an empty loop
-        let half_edge = self.add_half_edge(HalfEdge::new(vertex));
-        let edge_loop = self.add_edge_loop(EdgeLoop::new(half_edge));
+        let half_edge = self.solid.add_half_edge(HalfEdge::new(vertex));
+        let edge_loop = self.solid.add_edge_loop(EdgeLoop::new(half_edge));
         // Add empty face 
-        let face = self.add_face(Face::new(edge_loop));
+        let face = self.solid.add_face(Face::new(edge_loop));
 
         SkeletalPrimtive { face, edge_loop, half_edge, vertex }
     }
@@ -52,7 +54,7 @@ pub struct SplitFaceRes {
     edge: EdgeKey,
 }
 
-impl Solid {
+impl<S: TopologyRead + TopologyWrite> Topology<S> {
     /// Split a vertex at a halfedge, moving the edges contained with a "wedge"
     /// to the new vertex and assigning the loops of two newly created halfedges
     /// to those of the first and the last wedges.
@@ -72,13 +74,13 @@ impl Solid {
     -> ExtendVertexRes {
         // check if wedge_start and wedge_end are on the same vertex
         debug_assert!(
-            anchor != self.get_half_edge(wedge_start).vertex
-            || anchor != self.get_half_edge(wedge_end).vertex,
+            anchor != self.solid.half_edge(wedge_start).vertex
+            || anchor != self.solid.half_edge(wedge_end).vertex,
             "split_vertex: anchor does not belong to wedge_start or wedge_end!"
         );
         
         // create new vertex
-        let new_v = self.add_vertex(Vertex::new(coord));
+        let new_v = self.solid.add_vertex(Vertex::new(coord));
 
         // reassign half-edges in [wedge_start, wedge_end) to the new vertex
         // Walk thorugh half-edges and
@@ -91,15 +93,15 @@ impl Solid {
                 "split_vertex: Detected a cycle of wedge_start that does not go through wedge_end!"
             );
             
-            self.get_half_edge(he).vertex = new_v;
+            self.solid.half_edge_mut(he).vertex = new_v;
 
             // come back to anchor but in context of the next half-edge.
             // 
             // twin takes us to the opposing halfedge which starts at the vertex
             // before the anchor, then next takes us back the anchor but in the 
             // context of a different half-edge!
-            he = self.get_he_twin(he).
-                unwrap_or_else(
+            he = self.he_twin_mut(he)
+                .unwrap_or_else(
                     ||panic!("split_vertex: half-edge in [wedge_start, wedge_end) has no twin!")
                 ).get_next();
             
@@ -109,16 +111,16 @@ impl Solid {
         // edge case: "Empty" half edge (half edge with no neighbors,
         // obtained from `new_skeletal_primitive`
         let he_old_new: HalfEdgeKey;
-        if self.get_half_edge(wedge_start).neighbors.is_none() {
+        if self.solid.half_edge(wedge_start).neighbors.is_none() {
             // don't make a new old -> new half-edge;
             // use the empty half-edge instead
             he_old_new = wedge_start;
         } else {
-            he_old_new = self.add_half_edge(HalfEdge::new(anchor));
+            he_old_new = self.solid.add_half_edge(HalfEdge::new(anchor));
         }
 
         // make new edge between the anchor and the new vertex
-        let he_new_old = self.add_half_edge(HalfEdge::new(new_v));
+        let he_new_old = self.solid.add_half_edge(HalfEdge::new(new_v));
 
         // insert into the loops
         // wedge_end stayed at the anchor and we insert a new
@@ -127,7 +129,7 @@ impl Solid {
         self.insert_he_before(he_new_old, wedge_end);
 
         // now we identify properly them with an edge
-        let edge = self.add_edge(Edge::new(he_new_old, he_old_new));
+        let edge = self.solid.add_edge(Edge::new(he_new_old, he_old_new));
         
         ExtendVertexRes { edge: edge, vertex: new_v }
     }
@@ -137,17 +139,17 @@ impl Solid {
     pub fn split_face(&mut self, start: HalfEdgeKey, end: HalfEdgeKey) 
     -> SplitFaceRes {
         // create new half-edges 
-        let he_start_end = HalfEdge::new(self.get_half_edge(start).vertex);
-        let he_start_end = self.add_half_edge(he_start_end);  // positive
-        let he_end_start = HalfEdge::new(self.get_half_edge(end).vertex);
-        let he_end_start = self.add_half_edge(he_end_start);  // negative
+        let he_start_end = HalfEdge::new(self.solid.half_edge(start).vertex);
+        let he_start_end = self.solid.add_half_edge(he_start_end);  // positive
+        let he_end_start = HalfEdge::new(self.solid.half_edge(end).vertex);
+        let he_end_start = self.solid.add_half_edge(he_end_start);  // negative
 
         // identify with edge
-        let new_edge = self.add_edge(Edge::new(he_start_end, he_end_start));
+        let new_edge = self.solid.add_edge(Edge::new(he_start_end, he_end_start));
 
         // create new loop and face
-        let new_loop = self.add_edge_loop(EdgeLoop::new(he_end_start));
-        let new_face = self.add_face(Face::new(new_loop));
+        let new_loop = self.solid.add_edge_loop(EdgeLoop::new(he_end_start));
+        let new_face = self.solid.add_face(Face::new(new_loop));
         
         // reassign half-edges to new loop
         let mut he_key = start;
@@ -159,7 +161,7 @@ impl Solid {
                 "split_face: Detected a cycle of `start` that does not go through `end`!"
             );
 
-            let he = self.get_half_edge(he_key);
+            let he = self.solid.half_edge_mut(he_key);
             he.edge_loop = Some(new_loop);
             he_key = he.get_next();
             
@@ -173,21 +175,21 @@ impl Solid {
         // fix the loops so they are separated (see diagram in docs and this will make sense lol)
 
         // get neighborhoods of the new halfedges
-        let end_start_neigh = self.get_half_edge(he_end_start).get_neighbors();
-        let start_end_neigh = self.get_half_edge(he_start_end).get_neighbors();
+        let end_start_neigh = self.solid.half_edge(he_end_start).neighbors();
+        let start_end_neigh = self.solid.half_edge(he_start_end).neighbors();
 
         // fix the previous halfedges 
-        self.get_half_edge(end_start_neigh.prev).set_next(he_start_end); 
-        self.get_half_edge(start_end_neigh.prev).set_next(he_end_start);
+        self.solid.half_edge_mut(end_start_neigh.prev).set_next(he_start_end); 
+        self.solid.half_edge_mut(start_end_neigh.prev).set_next(he_end_start);
 
         // because we modifed the previous half-edges' destination,
         // we need to update our prev pointer too
-        self.get_half_edge(he_start_end).set_prev(end_start_neigh.prev);
-        self.get_half_edge(he_end_start).set_prev(start_end_neigh.prev);
+        self.solid.half_edge_mut(he_start_end).set_prev(end_start_neigh.prev);
+        self.solid.half_edge_mut(he_end_start).set_prev(start_end_neigh.prev);
         
         // reset the loop assignment
-        self.get_half_edge(he_end_start).edge_loop = Some(new_loop);  // insert_he broke this
-        let end_start_loop = self.get_half_edge(he_start_end).get_edge_loop();
+        self.solid.half_edge_mut(he_end_start).edge_loop = Some(new_loop);  // insert_he broke this
+        let end_start_loop = self.solid.half_edge_mut(he_start_end).get_edge_loop();
         self.set_loop_origin(end_start_loop, he_start_end);
         
         SplitFaceRes { face: new_face, edge_loop: new_loop, edge: new_edge }
@@ -200,37 +202,21 @@ impl Solid {
         // Check if this op is valid
     
         // do the half-edges of this edge belong to the same loop?
-        let edge = self.get_edge(edge_key);
+        let edge = self.solid.edge(edge_key);
         let he1_key = edge.neg;
         let he2_key = edge.pos;
 
-        let he1 = self.get_half_edge(he1_key);
-        let he2 = self.get_half_edge(he2_key);
+        let he1 = self.solid.half_edge(he1_key);
+        let he2 = self.solid.half_edge(he2_key);
         
-
         debug_assert!(
-            
-        )
+            he1.edge_loop == he2.edge_loop,
+            "split_ring_from_loop: tried removing an edge that is not part of the same loop!"
+        );
 
-
-        // get neighborhoods
-        let he1 = self.get_half_edge(he1_key);
-        let he1_neigh = he1.get_neighbors();
-        let he1_start = he1.vertex;
-        let he1_end = self.get_half_edge(he1_neigh.next).vertex;
-
-        let he2 = self.get_half_edge(he2_key);
-        let he2_neigh = he2.get_neighbors();
-        let he2_start = he2.vertex;
-        let he2_end = self.get_half_edge(he2_neigh.next).vertex;
-
+        let he1_prev = self.solid.half_edge(key).neighbors().prev
+        self.solid.rm_edge(edge_key);
         
-        // check if they are the "same"
-        if he2_start != he1_end || he1_start != he2_end {
-            return None
-        }
-        
-        // get vertex label from neighborhoods
 
         aaa
     }
