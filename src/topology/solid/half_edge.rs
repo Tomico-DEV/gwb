@@ -99,7 +99,7 @@ impl HalfEdge {
     }
 
     /// Get edge loop. Panics if edge loop is not present
-    pub fn get_edge_loop(&mut self) -> EdgeLoopKey {
+    pub fn get_edge_loop(&self) -> EdgeLoopKey {
         self.edge_loop.unwrap_or_else(||panic!("get_edge_loop: half-edge has no loop!"))
     }
 }

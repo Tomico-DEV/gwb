@@ -131,6 +131,10 @@ impl TopologyWrite for Solid {
             self.half_edge(key).edge.is_none(),
             "rm_half_edge: Half-edge still belongs to an edge!"
         );
+        debug_assert!(
+            self.half_edge(key).edge_loop.is_none(),
+            "rm_half_edge: Half-edge still belongs to a loop!"
+        );
         self.half_edges.remove(key).unwrap_or_else(
             ||panic!("rm_half_edge: Tried removing a half-edge that doesn't exist!")
         )
