@@ -1,13 +1,12 @@
 ///! This module is responsible for Euler operations
 
-use super::{Topology, TopologyRead, TopologyWrite};
+use super::super::{Topology, TopologyRead, TopologyWrite};
 
-use super::solid::*;
-use super::solid::face::*;
-use super::solid::edge::*;
-use super::solid::edge_loop::*;
-use super::solid::half_edge::*;
-use super::solid::vertex::*;
+use super::super::solid::face::*;
+use super::super::solid::edge::*;
+use super::super::solid::edge_loop::*;
+use super::super::solid::half_edge::*;
+use super::super::solid::vertex::*;
 
 use crate::geometry::point::Point;
 
@@ -15,10 +14,10 @@ use crate::geometry::point::Point;
 /// 
 /// Returned by `new_skeletal_primitive`
 pub struct SkeletalPrimtive {
-    face: FaceKey,
-    edge_loop:  EdgeLoopKey,
-    half_edge: HalfEdgeKey,
-    vertex: VertexKey
+    pub face: FaceKey,
+    pub edge_loop:  EdgeLoopKey,
+    pub half_edge: HalfEdgeKey,
+    pub vertex: VertexKey
 }
 
 // skeletal primitives
@@ -26,7 +25,7 @@ impl<S: TopologyRead + TopologyWrite> Topology<S> {
     /// Create a new skeletal primitive from nothing
     /// 
     /// Returns a tuple of the created lone vertex, 
-    pub fn new_skeletal_primitive(&mut self, origin: Point) 
+    pub fn add_skeletal_primitive(&mut self, origin: Point) 
     -> SkeletalPrimtive
     {
         // Add lone vertex
@@ -39,19 +38,53 @@ impl<S: TopologyRead + TopologyWrite> Topology<S> {
 
         SkeletalPrimtive { face, edge_loop, half_edge, vertex }
     }
+
+
+    /// Check if the structure belonging to a face is a
+    /// skeletal primitive
+    pub fn is_skeletal_primitive(&self, face_key: FaceKey) -> bool {
+        let outer_key = self.solid.face(face_key).outer;
+        let outer = self.solid.edge_loop(outer_key);
+        let he_key = outer.half_edge;
+        let he = self.solid.half_edge(he_key);
+        
+        self.solid.face(face_key).inner.is_empty()
+        && self.solid.edge_loop_is_empty(outer_key)
+        && he.edge.is_none()
+    }
+
+    /// Remove a skeletal primitive by specifying its face
+    /// 
+    /// Panics if the face belongs to something other than a skeletal primitive
+    pub fn rm_skeletal_primitive(&mut self, face_key: FaceKey) {
+        // check the loop is empty and has no edge
+        debug_assert!(
+            self.is_skeletal_primitive(face_key),
+            "rm_skeletal_primitive: face does not belong to a skeletal primitive!"
+        );
+
+        // ok, we're probably good
+        let outer_key = self.solid.face(face_key).outer;
+        let he_key = self.solid.edge_loop(outer_key).half_edge;
+        let vtx_key = self.solid.half_edge(he_key).vertex;
+        self.solid.rm_face(face_key);
+        self.solid.rm_edge_loop(outer_key);
+        self.solid.rm_half_edge(he_key);
+        self.solid.rm_vertex(vtx_key);
+    }
 }
 
 // low level Euler operators
 
 pub struct ExtendVertexRes {
-    edge: EdgeKey,
-    vertex: VertexKey,
+    pub edge: EdgeKey,
+    pub vertex: VertexKey,
 }
 
 pub struct SplitFaceRes {
-    face: FaceKey,
-    edge_loop: EdgeLoopKey,
-    edge: EdgeKey,
+    pub face: FaceKey,
+    pub edge_loop: EdgeLoopKey,
+    pub edge: EdgeKey,
 }
 
 
@@ -76,8 +109,8 @@ impl<S: TopologyRead + TopologyWrite> Topology<S> {
     -> ExtendVertexRes {
         // check if wedge_start and wedge_end are on the same vertex
         debug_assert!(
-            anchor != self.solid.half_edge(wedge_start).vertex
-            || anchor != self.solid.half_edge(wedge_end).vertex,
+            anchor == self.solid.half_edge(wedge_start).vertex
+            && anchor == self.solid.half_edge(wedge_end).vertex,
             "split_vertex: anchor does not belong to wedge_start or wedge_end!"
         );
         
@@ -113,7 +146,7 @@ impl<S: TopologyRead + TopologyWrite> Topology<S> {
         // edge case: "Empty" half edge (half edge with no neighbors,
         // obtained from `new_skeletal_primitive`
         let he_old_new: HalfEdgeKey;
-        if !self.solid.half_edge(wedge_start).has_neighbors() {
+        if !self.solid.he_has_neighbors(wedge_start) {
             // don't make a new old -> new half-edge;
             // use the empty half-edge instead
             he_old_new = wedge_start;
@@ -127,7 +160,10 @@ impl<S: TopologyRead + TopologyWrite> Topology<S> {
         // insert into the loops
         // wedge_end stayed at the anchor and we insert a new
         // halfedge that goes before wedge_end, starting at the new vertex 
-        self.insert_he_before(he_old_new, wedge_start);
+        // NOTE: THIS ORDERING MATTERS!
+        if !self.solid.he_has_neighbors(wedge_end) {
+            self.insert_he_before(he_old_new, wedge_start);
+        }
         self.insert_he_before(he_new_old, wedge_end);
 
         // now we identify properly them with an edge
@@ -138,6 +174,10 @@ impl<S: TopologyRead + TopologyWrite> Topology<S> {
 
     /// Split a face between two vertices of two half-edges belonging to the same face.
     /// Half-edges in [start, end) are assigned to a new loop
+    /// 
+    /// If used on the same half-edges, a new empty loop and a half-edge that has zero
+    /// length which is inserted into the old loop are created, and are identified
+    /// with an edge.
     pub fn split_face(&mut self, start: HalfEdgeKey, end: HalfEdgeKey) 
     -> SplitFaceRes {
         // create new half-edges 
@@ -156,10 +196,10 @@ impl<S: TopologyRead + TopologyWrite> Topology<S> {
         // reassign half-edges to new loop
         let mut he_key = start;
         let mut past_start = false;
-        while start != end {
+        while he_key != end {
             // check if this will become an infinite loop
             debug_assert!(
-                past_start && he_key == start,
+                !(past_start && he_key == start),
                 "split_face: Detected a cycle of `start` that does not go through `end`!"
             );
 
@@ -195,6 +235,23 @@ impl<S: TopologyRead + TopologyWrite> Topology<S> {
         self.set_loop_origin(end_start_loop, he_start_end);
         
         SplitFaceRes { face: new_face, edge_loop: new_loop, edge: new_edge }
+    }
+
+    /// Checks if the half-edge on the positive direction is a strut edge
+    pub fn edge_is_strut_pos(&self, edge_key: EdgeKey) -> bool {
+        let pos_key = self.solid.edge(edge_key).pos;
+        let neg_key = self.solid.edge(edge_key).neg;
+        let pos_neigh = self.solid.half_edge(pos_key).neighbors();
+
+        pos_neigh.next == neg_key
+    }
+
+    pub fn edge_is_strut_neg(&self, edge_key: EdgeKey) -> bool {
+        let pos_key = self.solid.edge(edge_key).pos;
+        let neg_key = self.solid.edge(edge_key).neg;
+        let neg_neigh = self.solid.half_edge(neg_key).neighbors();
+
+        neg_neigh.prev == pos_key
     }
     
     /// Split a loop along half-edges that occur twice, which if created properly,
@@ -234,7 +291,7 @@ impl<S: TopologyRead + TopologyWrite> Topology<S> {
         let pos_neigh = self.solid.half_edge(pos_key).neighbors();
 
         // for the new loop (positive side)
-        if pos_neigh.next == neg_key {  // edge case: strut edge on positive side
+        if self.edge_is_strut_pos(edge_key) {  // edge case: strut edge on positive side
             // use neg as the new empty half-edge
             let neigh = HalfEdgeNeighbors { next: neg_key, prev: neg_key };
             self.solid.set_he_neighbors(neg_key, neigh);
@@ -247,7 +304,7 @@ impl<S: TopologyRead + TopologyWrite> Topology<S> {
         }
         
         // for the unchanged loop (neg side)
-        if neg_neigh.prev == pos_key {  // edge case: strut edge on negative side
+        if self.edge_is_strut_neg(edge_key) {  // edge case: strut edge on negative side
             // make pos empty
             let neigh = HalfEdgeNeighbors { next: pos_key, prev: pos_key };
             self.solid.set_he_neighbors(pos_key, neigh);
@@ -273,8 +330,3 @@ impl<S: TopologyRead + TopologyWrite> Topology<S> {
         new_loop
     }
 } 
-
-// High level euler operators
-impl<S: TopologyRead + TopologyWrite> Topology<S> {
-    
-}

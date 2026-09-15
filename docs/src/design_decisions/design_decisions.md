@@ -32,4 +32,8 @@ two types of views (eg. `Topology` and `TopologyMut`) is not ideal.
 
 This is where I made use of generics and traits. A `Topology` holds
 a reference to a solid which through the use of generics, could be a `&Solid` or a `&mut Solid`. Then, two traits `TopologyRead` and
-`TopologyWrite` were created where 
+`TopologyWrite` were created, grouping functions that don't modify
+the solid and functions that do respectively.
+
+So to actually do stuff with a solid, you would first create a solid, then get a `Topology` context through some method and
+operate on the solid. Never operate directly on a solid!!

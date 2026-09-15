@@ -6,7 +6,9 @@ pub mod edge_loop;
 pub mod half_edge;
 pub mod vertex;
 
-use super::{TopologyWrite, TopologyRead};
+use crate::core::scalar::UInteger;
+
+use super::{TopologyWrite, TopologyRead, Topology};
 use face::*;
 use edge::*;
 use edge_loop::*;
@@ -41,6 +43,32 @@ impl Solid {
             vertices: SlotMap::with_key(),
         }
     }
+
+    /// Get a topology context for this solid.
+    pub fn topology(&self) -> Topology<&Self> {
+        Topology { solid: self }
+    }
+
+    /// Get a mutable topology context for this solid.
+    pub fn topology_mut(&mut self) -> Topology<&mut Self> {
+        Topology { solid: self }
+    }
+
+    pub fn n_faces(&self) -> UInteger {
+        self.faces.len() as UInteger
+    }
+    pub fn n_loops(&self) -> UInteger {
+        self.edge_loops.len() as UInteger
+    }
+    pub fn n_edges(&self) -> UInteger {
+        self.edges.len() as UInteger
+    }
+    pub fn n_half_edges(&self) -> UInteger {
+        self.half_edges.len() as UInteger
+    }
+    pub fn n_vertices(&self) -> UInteger {
+        self.vertices.len() as UInteger
+    }
 }
 
 
@@ -59,6 +87,15 @@ impl TopologyRead for Solid {
     }
     fn face(&self, key: FaceKey) -> &Face {
         &self.faces[key]
+    }
+
+    fn he_has_neighbors(&self, key: HalfEdgeKey) -> bool {
+        // If next is different, prev must be different as well
+        self.half_edge(key).get_next() != key
+    }
+    fn edge_loop_is_empty(&self, key: EdgeLoopKey) -> bool {
+        let he_key = self.edge_loop(key).half_edge;
+        !self.he_has_neighbors(he_key)
     }
 }
 
@@ -116,7 +153,8 @@ impl TopologyWrite for Solid {
         
         key
     }
-    /// Moves a half-edge out of the solid.
+    /// Moves a half-edge out of the solid. Automatically
+    /// sets the child vertex's parent to none
     /// 
     /// Will panic if the half-edge still belongs to an edge loop or an edge,
     /// or if it has neighbors other than itself.
@@ -124,7 +162,7 @@ impl TopologyWrite for Solid {
     /// Only call this after you have removed all references to the half-edge!
     fn rm_half_edge(&mut self, key: HalfEdgeKey) -> HalfEdge {
         debug_assert!(
-            self.half_edge(key).has_neighbors(),
+            !self.he_has_neighbors(key),
             "rm_half_edge: Half-edge still has neighbors!"
         );
         debug_assert!(
@@ -135,6 +173,11 @@ impl TopologyWrite for Solid {
             self.half_edge(key).edge_loop.is_none(),
             "rm_half_edge: Half-edge still belongs to a loop!"
         );
+
+        // set child vertex parent to none
+        let vtx_key = self.half_edge(key).vertex;
+        self.vertex_mut(vtx_key).half_edge = None;
+        
         self.half_edges.remove(key).unwrap_or_else(
             ||panic!("rm_half_edge: Tried removing a half-edge that doesn't exist!")
         )
@@ -188,7 +231,7 @@ impl TopologyWrite for Solid {
     fn rm_edge_loop(&mut self, key: EdgeLoopKey) -> EdgeLoop {
         let he_key = self.edge_loop(key).half_edge;
         debug_assert!(
-            self.half_edge(he_key).has_neighbors(),
+            !self.he_has_neighbors(he_key),
             "rm_edge_loop: Tried removing a loop that still has a cycle of half-edges!"
         );
 
@@ -252,4 +295,11 @@ impl TopologyWrite for Solid {
 
         self.half_edge_mut(he_key).neighbors = Some(neighbors);
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    mod topol_write;
 }

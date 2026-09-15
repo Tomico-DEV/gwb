@@ -24,7 +24,7 @@ pub struct HalfEdge {
     /// The [Vertex](vertex.rs) associated with this half-edge
     pub vertex: VertexKey,
     /// The key to the next half-edge
-    pub(super) neighbors: Option<HalfEdgeNeighbors>,
+    pub neighbors: Option<HalfEdgeNeighbors>,
     /// The key to the edge associated with thsi half-edge
     pub edge: Option<EdgeKey>,
     /// The key to the loop this half-edge belongs to
@@ -49,16 +49,6 @@ impl HalfEdge {
     /// Panics if neighbors are missing (improperly initialized)
     pub fn neighbors(&self) -> HalfEdgeNeighbors {
         self.neighbors.unwrap_or_else(||panic!("get_neighbor: half-edge is uninitialized!"))
-    }
-
-    /// Check if vertex has neighbors that are not itself
-    /// 
-    /// # Panics
-    /// Panics if neighbors are missing (improperly initialized)
-    pub fn has_neighbors(&self) -> bool {
-        // if next is not prev then they must not be self
-        // as this should be impossible via the use the Solid.set_he_neighbor
-        self.get_next() != self.get_prev()
     }
 
     /// Get next half-edge in the loop

@@ -7,6 +7,15 @@ pub struct Point {
     pub z: Real,
 }
 
-// impl Point {
+impl Point {
+    pub fn new(x: Real, y: Real, z: Real) -> Self {
+        Self { x, y, z }
+    }
+}
 
-// }
+#[macro_export]
+macro_rules! point {
+    ($x: expr, $y: expr, $z: expr) => {
+        Point::new($x, $y, $z)
+    };
+}

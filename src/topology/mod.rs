@@ -3,6 +3,8 @@
 ///! Topology is how things are connected; the precise coordinates or "where things are"
 ///! are the [geometry module](../geometry/mod.rs)'s responsibility.
 
+use auto_impl::auto_impl;
+
 mod solid;
 pub use solid::SolidKey;
 
@@ -15,6 +17,7 @@ use solid::half_edge::{HalfEdge, HalfEdgeKey, HalfEdgeNeighbors};
 use solid::vertex::{Vertex, VertexKey};
 
 /// Trait for read-only access to a solid
+#[auto_impl(&, &mut)]
 pub trait TopologyRead {
     /// Get a vertex from a key
     fn vertex(&self, key: VertexKey) -> &Vertex;
@@ -26,9 +29,16 @@ pub trait TopologyRead {
     fn edge_loop(&self, key: EdgeLoopKey) -> &EdgeLoop;
     /// Get a face from a key
     fn face(&self, key: FaceKey) -> &Face;
+
+    /// Check if a half-edge has neighbors other than itself
+    /// Panics if neighbors are missing (improperly initialized)
+    fn he_has_neighbors(&self, key: HalfEdgeKey) -> bool;
+    /// Check if an edge loop is empty
+    fn edge_loop_is_empty(&self, key: EdgeLoopKey) -> bool;
 }
 
 /// Trait for read-write access to a solid
+#[auto_impl(&mut)]
 pub trait TopologyWrite: TopologyRead {
     /// Get a mutable vertex from a key
     fn vertex_mut(&mut self, key: VertexKey) -> &mut Vertex;
@@ -105,15 +115,30 @@ impl<S: TopologyWrite + TopologyRead> Topology<S> {
         let target_loop = target.edge_loop;
 
         // configure he's neighbors
-        let he_neigh = HalfEdgeNeighbors {
-            prev: target_key,
-            next: target.get_next()
-        };
-
-        let target_neigh = HalfEdgeNeighbors {
-            prev: target.get_prev(),
-            next: he_key
-        };
+        let (he_neigh, target_neigh) =
+            if self.solid.he_has_neighbors(target_key) {  // normal case
+                (
+                    HalfEdgeNeighbors {
+                        prev: target_key,
+                        next: target.get_next()
+                    },
+                    HalfEdgeNeighbors {
+                        prev: target.get_prev(),
+                        next: he_key
+                    }
+                )
+            } else {  // strut case
+                (
+                    HalfEdgeNeighbors {
+                        prev: target_key,
+                        next: target_key,
+                    },
+                    HalfEdgeNeighbors {
+                        prev: he_key,
+                        next: he_key,
+                    }
+                )
+            };
 
         // now set neighbors
         let he = self.solid.half_edge_mut(he_key); 
@@ -123,21 +148,38 @@ impl<S: TopologyWrite + TopologyRead> Topology<S> {
         self.solid.set_he_neighbors(target_key, target_neigh);
     }
 
-    /// Insert a half-edge into a loop before a specified half-edge
+    /// Insert a half-edge into a loop before a specified half-edge.
+    /// 
+    /// Automatically handles empty loop edge cases too.
     pub fn insert_he_before(&mut self, he_key: HalfEdgeKey, target_key: HalfEdgeKey) {
         let target = self.solid.half_edge(target_key);
         let target_loop = target.edge_loop;
         
         // configure he's neighbors
-        let he_neigh = HalfEdgeNeighbors {
-            prev: target.get_prev(),
-            next: target_key
-        };
-
-        let target_neigh = HalfEdgeNeighbors {
-            prev: target.get_prev(),
-            next: he_key
-        };
+        let (he_neigh, target_neigh) =
+            if self.solid.he_has_neighbors(target_key) {  // normal case
+                (
+                    HalfEdgeNeighbors {
+                        prev: target.get_prev(),
+                        next: target_key,
+                    },
+                    HalfEdgeNeighbors {
+                        prev: target.get_prev(),
+                        next: he_key,
+                    }
+                )
+            } else {  // strut case
+                (
+                    HalfEdgeNeighbors {
+                        prev: target_key,
+                        next: target_key,
+                    },
+                    HalfEdgeNeighbors {
+                        prev: he_key,
+                        next: he_key,
+                    }
+                )
+            };
 
         // now set neighbors
         let he = self.solid.half_edge_mut(he_key); 
