@@ -1,5 +1,5 @@
-use crate::{geometry::point::Point, point};
 use super::Solid;
+use crate::{geometry::point::Point, point};
 
 #[test]
 fn recognition() {
@@ -15,10 +15,10 @@ fn recognition() {
 
     debug_assert!(
         solid.n_faces() == 1
-        && solid.n_loops() == 1
-        && solid.n_edges() == 0
-        && solid.n_half_edges() == 1
-        && solid.n_vertices() == 1,
+            && solid.n_loops() == 1
+            && solid.n_edges() == 0
+            && solid.n_half_edges() == 1
+            && solid.n_vertices() == 1,
         "Solid has wrong number of objects!"
     );
 }
@@ -33,10 +33,10 @@ fn identity() {
 
     debug_assert!(
         solid.n_faces() == 0
-        && solid.n_loops() == 0
-        && solid.n_edges() == 0
-        && solid.n_half_edges() == 0
-        && solid.n_vertices() == 0,
+            && solid.n_loops() == 0
+            && solid.n_edges() == 0
+            && solid.n_half_edges() == 0
+            && solid.n_vertices() == 0,
         "Solid not empty!"
     );
 }

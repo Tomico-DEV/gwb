@@ -1,11 +1,10 @@
 use slotmap::new_key_type;
 
-use crate::topology::TopologyWrite;
-
 use super::Solid;
 use super::edge::EdgeKey;
 use super::edge_loop::EdgeLoopKey;
 use super::vertex::VertexKey;
+use crate::topology::TopologyWrite;
 
 new_key_type! { pub struct HalfEdgeKey; }
 
@@ -39,16 +38,17 @@ impl HalfEdge {
             vertex,
             neighbors: None,
             edge: None,
-            edge_loop: None
+            edge_loop: None,
         }
     }
 
     /// Get neighbors.
-    /// 
+    ///
     /// # Panics
     /// Panics if neighbors are missing (improperly initialized)
     pub fn neighbors(&self) -> HalfEdgeNeighbors {
-        self.neighbors.unwrap_or_else(||panic!("get_neighbor: half-edge is uninitialized!"))
+        self.neighbors
+            .unwrap_or_else(|| panic!("get_neighbor: half-edge is uninitialized!"))
     }
 
     /// Get next half-edge in the loop
@@ -69,20 +69,20 @@ impl HalfEdge {
 
 
     /// Set the next half-edge of the loop
-    /// 
-    /// Don't use this if you are a user! Make use of euler operators 
+    ///
+    /// Don't use this if you are a user! Make use of euler operators
     /// and such instead
-    /// 
+    ///
     /// Panics if half-edge has no neighbors
     pub fn set_next(&mut self, key: HalfEdgeKey) {
         self.neighbors().next = key;
     }
 
     /// Set the previous half-edge of the loop
-    /// 
-    /// Don't use this if you are a user! Make use of euler operators 
+    ///
+    /// Don't use this if you are a user! Make use of euler operators
     /// and such instead
-    /// 
+    ///
     /// Panics if half-edge has no neighbors
     pub fn set_prev(&mut self, key: HalfEdgeKey) {
         self.neighbors().prev = key;
@@ -90,6 +90,7 @@ impl HalfEdge {
 
     /// Get edge loop. Panics if edge loop is not present
     pub fn get_edge_loop(&self) -> EdgeLoopKey {
-        self.edge_loop.unwrap_or_else(||panic!("get_edge_loop: half-edge has no loop!"))
+        self.edge_loop
+            .unwrap_or_else(|| panic!("get_edge_loop: half-edge has no loop!"))
     }
 }

@@ -18,7 +18,7 @@ impl EdgeLoop {
     pub fn new(half_edge: HalfEdgeKey) -> Self {
         Self {
             half_edge,
-            face: None
+            face: None,
         }
     }
 }

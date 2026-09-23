@@ -6,14 +6,14 @@ pub mod edge_loop;
 pub mod half_edge;
 pub mod vertex;
 
-use crate::core::scalar::UInteger;
-
-use super::{TopologyWrite, TopologyRead, Topology};
-use face::*;
 use edge::*;
 use edge_loop::*;
+use face::*;
 use half_edge::*;
 use vertex::*;
+
+use super::{Topology, TopologyRead, TopologyWrite};
+use crate::core::scalar::UInteger;
 
 new_key_type! { pub struct SolidKey; }
 
@@ -109,31 +109,31 @@ impl TopologyWrite for Solid {
     fn edge_mut(&mut self, key: EdgeKey) -> &mut Edge {
         &mut self.edges[key]
     }
-    fn edge_loop_mut(&mut self, key:EdgeLoopKey) -> &mut EdgeLoop {
+    fn edge_loop_mut(&mut self, key: EdgeLoopKey) -> &mut EdgeLoop {
         &mut self.edge_loops[key]
     }
     fn face_mut(&mut self, key: FaceKey) -> &mut Face {
         &mut self.faces[key]
     }
-    
+
     /// Moves a vertex into the solid
     fn add_vertex(&mut self, vertex: Vertex) -> VertexKey {
         self.vertices.insert(vertex)
     }
     /// Moves a vertex out of the solid.
-    /// 
+    ///
     /// Will panic if you try to remove a vertex that still has an associated
     /// half-edge.
-    /// 
+    ///
     /// Only call this after you have removed all references to the vertex!!
     fn rm_vertex(&mut self, key: VertexKey) -> Vertex {
         debug_assert!(
             self.vertex(key).half_edge.is_none(),
             "rm_vertex: Vertex still belongs to an half-edge!"
         );
-        self.vertices.remove(key).unwrap_or_else(
-            ||panic!("rm_vertex: Tried removing a vertex that doesn't exist!")
-        )
+        self.vertices
+            .remove(key)
+            .unwrap_or_else(|| panic!("rm_vertex: Tried removing a vertex that doesn't exist!"))
     }
 
     /// Add a halfedge to the solid.
@@ -148,17 +148,20 @@ impl TopologyWrite for Solid {
         vertex.half_edge = Some(key);
 
         // set self as neighbors
-        let neighbor = HalfEdgeNeighbors { next: key, prev: key };
+        let neighbor = HalfEdgeNeighbors {
+            next: key,
+            prev: key,
+        };
         self.set_he_neighbors(key, neighbor);
-        
+
         key
     }
     /// Moves a half-edge out of the solid. Automatically
     /// sets the child vertex's parent to none
-    /// 
+    ///
     /// Will panic if the half-edge still belongs to an edge loop or an edge,
     /// or if it has neighbors other than itself.
-    /// 
+    ///
     /// Only call this after you have removed all references to the half-edge!
     fn rm_half_edge(&mut self, key: HalfEdgeKey) -> HalfEdge {
         debug_assert!(
@@ -177,10 +180,10 @@ impl TopologyWrite for Solid {
         // set child vertex parent to none
         let vtx_key = self.half_edge(key).vertex;
         self.vertex_mut(vtx_key).half_edge = None;
-        
-        self.half_edges.remove(key).unwrap_or_else(
-            ||panic!("rm_half_edge: Tried removing a half-edge that doesn't exist!")
-        )
+
+        self.half_edges.remove(key).unwrap_or_else(|| {
+            panic!("rm_half_edge: Tried removing a half-edge that doesn't exist!")
+        })
     }
 
     /// Insert an edge and automatically initialize its half-edges
@@ -206,18 +209,18 @@ impl TopologyWrite for Solid {
         let edge = self.edge(key).clone();
         self.half_edge_mut(edge.neg).edge = None;
         self.half_edge_mut(edge.pos).edge = None;
-        
-        self.edges.remove(key).unwrap_or_else(
-            ||panic!("rm_edge: Tried removing an edge that does not exist!")
-        )
+
+        self.edges
+            .remove(key)
+            .unwrap_or_else(|| panic!("rm_edge: Tried removing an edge that does not exist!"))
     }
-    
+
     /// Add an edge loop to the solid. Automatically sets the edge loop as
     /// the parent of its half-edge
     fn add_edge_loop(&mut self, edge_loop: EdgeLoop) -> EdgeLoopKey {
         let key = self.edge_loops.insert(edge_loop);
 
-        // set half-edge loop parent 
+        // set half-edge loop parent
         let he = self.edge_loop(key).half_edge;
         self.half_edge_mut(he).edge_loop = Some(key);
 
@@ -225,7 +228,7 @@ impl TopologyWrite for Solid {
     }
     /// Move an edge loop out of the solid. Can only be done
     /// if only an empty half-edge is present in the loop
-    /// 
+    ///
     /// Will panic if the edge loop still belongs to a face, or if
     /// the loop contains more than one half-edge
     fn rm_edge_loop(&mut self, key: EdgeLoopKey) -> EdgeLoop {
@@ -237,17 +240,17 @@ impl TopologyWrite for Solid {
 
         // reset half-edge parent
         self.half_edge_mut(he_key).edge_loop = None;
-        
+
         debug_assert!(
             self.edge_loop(key).face.is_none(),
             "rm_edge_loop: Tried removing a loop that still belonged to a face!"
         );
 
-        self.edge_loops.remove(key).unwrap_or_else(
-            ||panic!("rm_edge_loop: Tried removing an edge loop that does not exist!")
-        )
+        self.edge_loops.remove(key).unwrap_or_else(|| {
+            panic!("rm_edge_loop: Tried removing an edge loop that does not exist!")
+        })
     }
-    
+
     /// Move a face into the solid.
     /// Automatically sets the face as the parent of its edge loop.
     fn add_face(&mut self, face: Face) -> FaceKey {
@@ -269,25 +272,21 @@ impl TopologyWrite for Solid {
         // outer
         let outer_key = self.face(key).outer;
         self.edge_loop_mut(outer_key).face = None;
-        // inner 
+        // inner
         let inner_keys = self.face(key).inner.clone();
         for key in inner_keys {
             self.edge_loop_mut(key).face = None;
         }
-        self.faces.remove(key).unwrap_or_else(
-            ||panic!("rm_face: tried removing a face that doesn't exist!")
-        )
+        self.faces
+            .remove(key)
+            .unwrap_or_else(|| panic!("rm_face: tried removing a face that doesn't exist!"))
     }
 
     /// Set the neighor of a half-edge.
-    /// 
+    ///
     /// Ensures invalid states aren't allowed
     /// (eg prev: self, next: different and vice versa)
-    fn set_he_neighbors(
-        &mut self,
-        he_key: HalfEdgeKey,
-        neighbors: HalfEdgeNeighbors
-    ) {
+    fn set_he_neighbors(&mut self, he_key: HalfEdgeKey, neighbors: HalfEdgeNeighbors) {
         debug_assert!(
             !((neighbors.prev == he_key) ^ (neighbors.next == he_key)),
             "set_he_neighbor: Tried setting an invalid neighbor!"

@@ -18,15 +18,13 @@ pub struct Face {
 
 impl Face {
     /// New empty face.
-    /// 
-    /// Surface is initialized with 0, 0, 0 
+    ///
+    /// Surface is initialized with 0, 0, 0
     pub fn new(boundary: EdgeLoopKey) -> Self {
         Self {
             outer: boundary,
             inner: Vec::<EdgeLoopKey>::new(),
-            surface: PlanarSurface {
-                eq: Vec3::zero()
-            }
+            surface: PlanarSurface { eq: Vec3::zero() },
         }
     }
 }

@@ -15,7 +15,7 @@ pub struct Edge {
 
 impl Edge {
     /// Create a new edge.
-    /// 
+    ///
     /// This edge will be set as the twins' parent upon being
     /// added into a solid
     pub fn new(pos: HalfEdgeKey, neg: HalfEdgeKey) -> Self {
@@ -23,7 +23,7 @@ impl Edge {
     }
 
     /// Get the twin of a half-edge belonging to this Edge
-    /// 
+    ///
     /// # Panics
     /// Panics if the given half-edge key does not belong to this Edge
     pub fn get_twin(&self, key: HalfEdgeKey) -> HalfEdgeKey {

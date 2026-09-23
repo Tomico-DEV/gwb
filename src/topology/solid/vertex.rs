@@ -18,7 +18,7 @@ impl Vertex {
     pub fn new(point: Point) -> Self {
         Self {
             coord: point,
-            half_edge: None
+            half_edge: None,
         }
     }
 }

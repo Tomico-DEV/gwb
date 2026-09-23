@@ -126,16 +126,19 @@ How do we assign the loops to the newly created edge?
 ![Split vertex problem 2](img/vertex_split_problem_2.svg)
 
 To us, it seems pretty obvious that the diagram on the left is the right answer.
-In case you are confused, the diagram on the right treats the 
-
-
+In case you are confused, the diagram on the right treats the newly formed edge
+as a strut edge for the loops on the left and the right (I am too lazy to write
+a proper explanation so it's ok to just know that this is weird and wrong.)
 
 This is solved by treating the "edges to reassign to the new vertex"
-input as a **range** instead of a list. 
+input as a **range**, so we can't make bad or degenerate choices by choosing
+edges with gaps in between.
 
-### Collapse Edge (Remove Edge and Vertex)
+This section is a work in progress I am too lazy rn lmao
 
-This operator is the inverse of the `Subdivide Loop` operator. It joins
+### Dissolve Vertex (Remove Edge and Vertex)
+
+This operator is the inverse of the `Split Vertex` operator. It joins
 two connected vertices in a loop and removes the edge between them, merging their edge cycle.
 
 ### Split Face (Add Edge and Face)
